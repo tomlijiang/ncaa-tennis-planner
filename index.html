@@ -1,0 +1,2008 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>网球升 NCAA 规划器 | NCAA Tennis Pathway Planner</title>
+  <style>
+    :root {
+      --ink: #18202b;
+      --muted: #5c6675;
+      --line: #d8dde5;
+      --panel: #ffffff;
+      --page: #f4f6f9;
+      --navy: #22314a;
+      --court: #20766d;
+      --clay: #b56545;
+      --gold: #d9a441;
+      --blue: #2e6fbd;
+      --green: #27845f;
+      --red: #bf4b4b;
+      --shadow: 0 10px 30px rgba(21, 32, 45, 0.08);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background: var(--page);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      -webkit-text-size-adjust: 100%;
+      background:
+        linear-gradient(120deg, rgba(34, 49, 74, 0.05), rgba(32, 118, 109, 0.04)),
+        var(--page);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .app {
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(216, 221, 229, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    .topbar-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: center;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 14px 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      gap: 12px;
+    }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      border: 3px solid #e9c85f;
+      background:
+        linear-gradient(90deg, transparent 46%, #f6de82 46% 54%, transparent 54%),
+        #d6ad29;
+      color: #243147;
+      font-size: 0;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .en {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
+    .hero-copy h2 .en {
+      margin-top: 9px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 18px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .hero-stat span .en,
+    .nav .en,
+    .pill .en {
+      color: inherit;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .icon-btn,
+    .text-btn {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 7px;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+    }
+
+    .icon-btn {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      padding: 0;
+    }
+
+    .text-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      font-weight: 650;
+    }
+
+    .icon-btn:hover,
+    .text-btn:hover {
+      border-color: #b7bfcc;
+      transform: translateY(-1px);
+    }
+
+    .primary {
+      border-color: var(--navy);
+      background: var(--navy);
+      color: #fff;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 24px;
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .side {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      display: grid;
+      gap: 14px;
+    }
+
+    .profile-panel,
+    .section,
+    .metric,
+    .timeline-item,
+    .event-row,
+    .school-row,
+    .task {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .profile-panel {
+      padding: 16px;
+    }
+
+    .player-name {
+      margin: 0 0 6px;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .player-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #d9e0eb;
+      background: #f7f9fc;
+      color: #3f4a58;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .nav {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .nav a {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      color: #2b3646;
+      text-decoration: none;
+      font-weight: 650;
+      font-size: 14px;
+    }
+
+    .nav a:hover,
+    .nav a.active {
+      background: #eef3f8;
+      color: var(--blue);
+    }
+
+    .court-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 174px;
+      border-radius: var(--radius);
+      border: 1px solid #cfd6e0;
+      background: #17304b;
+      box-shadow: var(--shadow);
+    }
+
+    .court {
+      position: absolute;
+      inset: 14px;
+      display: grid;
+      place-items: center;
+      border: 3px solid rgba(255, 255, 255, 0.86);
+      background: linear-gradient(90deg, #1f7c70 0 50%, #227e73 50% 100%);
+    }
+
+    .court::before,
+    .court::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    .court::before {
+      width: 3px;
+      height: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .court::after {
+      width: 100%;
+      height: 3px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .service-lines {
+      position: absolute;
+      inset: 28px 42px;
+      border-left: 3px solid rgba(255, 255, 255, 0.86);
+      border-right: 3px solid rgba(255, 255, 255, 0.86);
+    }
+
+    .court-score {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: #f3f6fa;
+      border: 4px solid #e0b642;
+      color: var(--navy);
+      font-size: 30px;
+      font-weight: 800;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+    }
+
+    .main {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .readiness {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 16px;
+      align-content: center;
+      min-height: 260px;
+      background:
+        linear-gradient(120deg, rgba(34, 49, 74, 0.95), rgba(31, 89, 110, 0.90)),
+        radial-gradient(circle at 80% 10%, rgba(217, 164, 65, 0.35), transparent 34%);
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .hero-copy h2 {
+      margin: 0;
+      max-width: 760px;
+      font-size: 34px;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .hero-stat {
+      min-height: 72px;
+      padding: 12px;
+      border-radius: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(255, 255, 255, 0.09);
+    }
+
+    .hero-stat b {
+      display: block;
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .hero-stat span {
+      display: block;
+      margin-top: 4px;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .section {
+      scroll-margin-top: 88px;
+      padding: 18px;
+      box-shadow: none;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section h2,
+    .readiness h2 {
+      margin: 0;
+      font-size: 19px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .section-note {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .profile-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .field label {
+      color: #3c4654;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1.3;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid #cfd6e0;
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      padding: 9px 10px;
+      outline: none;
+      appearance: none;
+    }
+
+    .field select,
+    .list select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, #687386 50%),
+        linear-gradient(135deg, #687386 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 13px) 50%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding-right: 32px;
+    }
+
+    .field textarea {
+      min-height: 78px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(46, 111, 189, 0.14);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      min-height: 130px;
+      padding: 14px;
+      box-shadow: none;
+    }
+
+    .metric-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+      color: #384454;
+      font-weight: 750;
+      font-size: 13px;
+    }
+
+    .metric-value {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 10px;
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .metric-value small {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .bar {
+      position: relative;
+      overflow: hidden;
+      height: 10px;
+      border-radius: 999px;
+      background: #e8edf3;
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: var(--value, 0%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--clay), var(--gold), var(--court));
+    }
+
+    .metric-caption {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .readiness {
+      display: grid;
+      gap: 14px;
+    }
+
+    .big-score {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ring {
+      --score: 0;
+      display: grid;
+      place-items: center;
+      width: 132px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, #fff 0 58%, transparent 59%),
+        conic-gradient(var(--green) calc(var(--score) * 1%), #e7ecf2 0);
+      border: 1px solid #dfe5ee;
+      font-size: 28px;
+      font-weight: 850;
+    }
+
+    .level-name {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 850;
+    }
+
+    .level-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr) minmax(170px, 0.42fr);
+      gap: 14px;
+      align-items: start;
+      padding: 14px;
+      box-shadow: none;
+    }
+
+    .age {
+      display: grid;
+      gap: 6px;
+      align-content: start;
+    }
+
+    .age strong {
+      font-size: 20px;
+      line-height: 1.2;
+    }
+
+    .age span {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .timeline-item h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      line-height: 1.25;
+    }
+
+    .timeline-item ul,
+    .task ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #3f4b59;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .stage {
+      display: flex;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .panel-lite {
+      border: 1px solid #dfe4ec;
+      border-radius: var(--radius);
+      background: #fbfcfe;
+      padding: 14px;
+    }
+
+    .panel-lite h3 {
+      margin: 0 0 10px;
+      font-size: 15px;
+      line-height: 1.3;
+    }
+
+    .range-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 128px minmax(0, 1fr) 44px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      accent-color: var(--court);
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .event-row,
+    .school-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 0.7fr) minmax(120px, 0.55fr) minmax(150px, 1fr) 116px 38px;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      box-shadow: none;
+    }
+
+    .school-row {
+      grid-template-columns: minmax(140px, 1fr) minmax(100px, 0.45fr) minmax(130px, 0.55fr) minmax(150px, 1fr) 38px;
+    }
+
+    .list input,
+    .list select {
+      min-width: 0;
+      min-height: 36px;
+      border: 1px solid #ccd4df;
+      border-radius: 7px;
+      padding: 7px 9px;
+      background: #fff;
+    }
+
+    .delete-btn {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid #e2c9c9;
+      border-radius: 7px;
+      background: #fff7f7;
+      color: #a43d3d;
+      font-weight: 850;
+    }
+
+    .event-row input,
+    .event-row select,
+    .school-row input,
+    .school-row select {
+      width: 100%;
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .task {
+      padding: 14px;
+      box-shadow: none;
+    }
+
+    .task h3 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      color: #3f4b59;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .check input {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      accent-color: var(--court);
+    }
+
+    .export {
+      white-space: pre-wrap;
+      min-height: 180px;
+      border: 1px solid #cfd6e0;
+      border-radius: 7px;
+      padding: 12px;
+      background: #f9fbfd;
+      color: #2c3745;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    @media (max-width: 1080px) {
+      .topbar-inner {
+        grid-template-columns: 1fr;
+        align-items: start;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+
+      .shell,
+      .hero,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+        grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+      }
+
+      .nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .court-card {
+        min-height: 154px;
+      }
+
+      .profile-grid,
+      .metrics,
+      .hero-grid,
+      .task-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .event-row {
+        grid-template-columns: minmax(150px, 1fr) minmax(130px, 0.75fr) minmax(180px, 1.2fr) minmax(130px, 0.7fr) 44px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding-bottom: calc(76px + env(safe-area-inset-bottom));
+      }
+
+      .topbar {
+        position: static;
+      }
+
+      .topbar-inner,
+      .shell {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .topbar-inner {
+        gap: 12px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .mark {
+        width: 34px;
+        height: 34px;
+      }
+
+      h1 {
+        font-size: 19px;
+      }
+
+      .subtitle {
+        font-size: 12px;
+      }
+
+      .actions {
+        display: grid;
+        grid-template-columns: 1fr 46px 46px;
+        width: 100%;
+      }
+
+      .icon-btn,
+      .text-btn {
+        min-height: 44px;
+      }
+
+      .icon-btn {
+        width: 100%;
+      }
+
+      .topbar-inner,
+      .side,
+      .profile-grid,
+      .metrics,
+      .hero-grid,
+      .task-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .shell {
+        gap: 14px;
+        padding-top: 14px;
+        padding-bottom: 16px;
+      }
+
+      .side {
+        display: block;
+      }
+
+      .profile-panel {
+        padding: 12px;
+      }
+
+      .profile-panel .nav {
+        display: none;
+      }
+
+      .player-name {
+        font-size: 15px;
+      }
+
+      .player-meta {
+        margin-bottom: 10px;
+      }
+
+      .court-card {
+        min-height: 118px;
+      }
+
+      .court {
+        inset: 10px;
+      }
+
+      .court-score {
+        width: 74px;
+        height: 74px;
+        font-size: 24px;
+      }
+
+      .mobile-nav {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 2px;
+        padding: 8px 8px calc(8px + env(safe-area-inset-bottom));
+        border-top: 1px solid rgba(216, 221, 229, 0.96);
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(16px);
+      }
+
+      .mobile-nav a {
+        display: grid;
+        place-items: center;
+        min-height: 48px;
+        border-radius: 7px;
+        color: #314050;
+        text-decoration: none;
+        font-size: 11px;
+        font-weight: 750;
+        line-height: 1.15;
+        text-align: center;
+      }
+
+      .mobile-nav a.active,
+      .mobile-nav a:hover {
+        background: #eef3f8;
+        color: var(--blue);
+      }
+
+      .mobile-nav svg {
+        width: 19px;
+        height: 19px;
+        margin-bottom: 2px;
+      }
+
+      .mobile-nav span {
+        display: block;
+      }
+
+      .hero-copy h2 {
+        font-size: 25px;
+      }
+
+      .hero-copy h2 .en {
+        font-size: 15px;
+      }
+
+      .hero-copy,
+      .readiness,
+      .section {
+        padding: 14px;
+        scroll-margin-top: 12px;
+      }
+
+      .hero-copy {
+        min-height: 0;
+      }
+
+      .hero-grid {
+        gap: 8px;
+      }
+
+      .hero-stat {
+        min-height: 64px;
+        padding: 10px;
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .section-head .text-btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .big-score,
+      .timeline-item,
+      .event-row,
+      .school-row {
+        grid-template-columns: 1fr;
+      }
+
+      .event-row,
+      .school-row {
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .event-row input,
+      .event-row select,
+      .school-row input,
+      .school-row select,
+      .field input,
+      .field select,
+      .field textarea,
+      .list input,
+      .list select {
+        min-height: 44px;
+        font-size: 16px;
+      }
+
+      .delete-btn {
+        width: 100%;
+        height: 42px;
+      }
+
+      .delete-btn::after {
+        content: " 删除 / Delete";
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .range-row {
+        grid-template-columns: minmax(0, 1fr) 50px;
+      }
+
+      .range-row input {
+        grid-column: 1 / -1;
+      }
+
+      .big-score {
+        justify-items: center;
+        text-align: center;
+      }
+
+      .ring {
+        width: 116px;
+      }
+
+      .timeline-item {
+        gap: 10px;
+      }
+
+      .stage {
+        order: -1;
+      }
+
+      .task h3 {
+        align-items: flex-start;
+      }
+
+      .check {
+        grid-template-columns: 26px minmax(0, 1fr);
+        min-height: 38px;
+      }
+
+      .check input {
+        width: 22px;
+        height: 22px;
+      }
+
+      .export {
+        max-height: 380px;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .topbar-inner,
+      .shell {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .hero-copy h2 {
+        font-size: 22px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .mobile-nav a {
+        font-size: 10px;
+      }
+
+      .mobile-nav span {
+        max-width: 48px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding-bottom: 0;
+      }
+
+      .topbar,
+      .mobile-nav,
+      .side,
+      .actions,
+      .delete-btn,
+      .no-print {
+        display: none !important;
+      }
+
+      .shell,
+      .hero,
+      .two-col,
+      .task-grid,
+      .metrics {
+        display: block;
+        padding: 0;
+      }
+
+      .main {
+        display: block;
+      }
+
+      .hero-copy,
+      .readiness,
+      .section,
+      .metric,
+      .timeline-item,
+      .task {
+        box-shadow: none;
+        break-inside: avoid;
+        margin-bottom: 12px;
+      }
+
+      .hero-copy {
+        color: #111;
+        background: #fff;
+      }
+
+      .print-only {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="mark" aria-hidden="true"></div>
+          <div>
+            <h1>网球升 NCAA 规划器 <span class="en">NCAA Tennis Pathway Planner</span></h1>
+            <p class="subtitle">男子学生运动员路线图 · ITF/UTR/WTN · 学业合规 · 教练招募<br>Roadmap for a male student-athlete · ratings · eligibility · recruiting</p>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="text-btn primary" id="saveBtn" type="button" title="保存到本机 / Save locally">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>
+            保存 / Save
+          </button>
+          <button class="icon-btn" id="printBtn" type="button" title="打印或导出 PDF / Print or export PDF">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+          </button>
+          <button class="icon-btn" id="resetBtn" type="button" title="恢复示例 / Reset sample">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="mobile-nav" aria-label="手机导航 / Mobile navigation">
+      <a href="#profile" class="active"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>档案<br>Profile</span></a>
+      <a href="#readiness"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="M19 10H5"/><path d="M19 16H5"/></svg><span>准备<br>Ready</span></a>
+      <a href="#roadmap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5"/><path d="M4 5h11l-1.5 4L15 13H4"/></svg><span>路线<br>Road</span></a>
+      <a href="#events"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg><span>赛事<br>Events</span></a>
+      <a href="#recruiting"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg><span>招募<br>Schools</span></a>
+      <a href="#export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg><span>摘要<br>Summary</span></a>
+    </nav>
+
+    <div class="shell">
+      <aside class="side">
+        <section class="profile-panel">
+          <p class="player-name" id="sideName">14岁中国男子网球学生运动员 / 14-year-old Chinese male tennis student-athlete</p>
+          <p class="player-meta">
+            <span id="sideBody">165cm · 45kg</span>
+            <span id="sideClass">预计 2030 入学 / Expected 2030 entry</span>
+          </p>
+          <div class="court-card" aria-hidden="true">
+            <div class="court">
+              <div class="service-lines"></div>
+              <div class="court-score" id="sideScore">62</div>
+            </div>
+          </div>
+          <nav class="nav" aria-label="页面导航 / Page navigation">
+            <a href="#profile" class="active"><svg viewBox="0 0 24 24"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>基础档案<span class="en">Profile</span></a>
+            <a href="#readiness"><svg viewBox="0 0 24 24"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="M19 10H5"/><path d="M19 16H5"/></svg>准备度<span class="en">Readiness</span></a>
+            <a href="#roadmap"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 5h11l-1.5 4L15 13H4"/></svg>四年路线<span class="en">4-Year Roadmap</span></a>
+            <a href="#events"><svg viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg>赛事计划<span class="en">Tournament Plan</span></a>
+            <a href="#recruiting"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg>招募清单<span class="en">Recruiting List</span></a>
+            <a href="#export"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>输出摘要<span class="en">Summary</span></a>
+          </nav>
+        </section>
+      </aside>
+
+      <main class="main">
+        <section class="hero" id="readiness">
+          <div class="hero-copy">
+            <div class="stage">
+              <span class="pill">ATF → ITF Junior</span>
+              <span class="pill">UTR/WTN 可验证 <span class="en">Verified ratings</span></span>
+              <span class="pill">NCAA Eligibility</span>
+            </div>
+            <h2 id="headline">先拿国际可识别成绩，再进入美国大学教练的视野。<span class="en">Build internationally verifiable results before entering U.S. college coaches' recruiting radar.</span></h2>
+            <div class="hero-grid">
+              <div class="hero-stat"><b id="heroAge">14</b><span>当前年龄<span class="en">Current age</span></span></div>
+              <div class="hero-stat"><b id="heroItf">0</b><span>ITF Junior 积分<span class="en">ITF Junior points</span></span></div>
+              <div class="hero-stat"><b id="heroUtr">-</b><span>UTR 参考<span class="en">UTR reference</span></span></div>
+              <div class="hero-stat"><b id="heroYears">4</b><span>到入学窗口<span class="en">Years to entry</span></span></div>
+            </div>
+          </div>
+          <div class="readiness">
+            <div class="section-head">
+              <div>
+                <h2>总体准备度 <span class="en">Overall Readiness</span></h2>
+                <p class="section-note">按网球成绩、学业合规、招募材料、身体基础综合估算。<br>Estimated from tennis evidence, academic eligibility, recruiting assets, and physical base.</p>
+              </div>
+            </div>
+            <div class="big-score">
+              <div class="ring" id="scoreRing">62</div>
+              <div>
+                <p class="level-name" id="fitLevel">路线健康，需补 ITF 和视频证据</p>
+                <p class="level-copy" id="fitCopy">当前重点是 ITF J30/J60 拿分、建立 UTR/WTN 样本、保留 9 年级后成绩单。</p>
+              </div>
+            </div>
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric-title">网球证据 / Tennis Evidence <span id="tennisScore">56</span></div>
+                <div class="bar"><span id="tennisBar"></span></div>
+                <p class="metric-caption" id="tennisCaption">ATF 有基础，ITF/UTR 样本越多越好。</p>
+              </div>
+              <div class="metric">
+                <div class="metric-title">学业合规 / Academic Eligibility <span id="academicScore">70</span></div>
+                <div class="bar"><span id="academicBar"></span></div>
+                <p class="metric-caption" id="academicCaption">从 9 年级起整理英文成绩单。</p>
+              </div>
+              <div class="metric">
+                <div class="metric-title">招募材料 / Recruiting Assets <span id="recruitScore">45</span></div>
+                <div class="bar"><span id="recruitBar"></span></div>
+                <p class="metric-caption" id="recruitCaption">需要完整比赛和剪辑视频。</p>
+              </div>
+              <div class="metric">
+                <div class="metric-title">身体基础 / Physical Base <span id="bodyScore">60</span></div>
+                <div class="bar"><span id="bodyBar"></span></div>
+                <p class="metric-caption" id="bodyCaption">优先力量、速度、恢复质量。</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="profile">
+          <div class="section-head">
+            <div>
+              <h2>基础档案 <span class="en">Student-Athlete Profile</span></h2>
+              <p class="section-note">这些字段会驱动路线图、准备度和输出摘要。<br>These fields drive the roadmap, readiness score, and monthly summary.</p>
+            </div>
+          </div>
+          <div class="grid profile-grid">
+            <div class="field">
+              <label for="name">姓名/代号 <span class="en">Name / ID</span></label>
+              <input id="name" data-field="name" value="中国男子网球学生运动员">
+            </div>
+            <div class="field">
+              <label for="age">年龄 <span class="en">Age</span></label>
+              <input id="age" data-field="age" type="number" min="10" max="22" value="14">
+            </div>
+            <div class="field">
+              <label for="height">身高 cm <span class="en">Height cm</span></label>
+              <input id="height" data-field="height" type="number" min="120" max="220" value="165">
+            </div>
+            <div class="field">
+              <label for="weight">体重 kg <span class="en">Weight kg</span></label>
+              <input id="weight" data-field="weight" type="number" min="25" max="120" value="45">
+            </div>
+            <div class="field">
+              <label for="grade">当前年级 <span class="en">Current grade</span></label>
+              <select id="grade" data-field="grade">
+                <option value="8年级">8年级 / Grade 8</option>
+                <option value="9年级" selected>9年级 / Grade 9</option>
+                <option value="10年级">10年级 / Grade 10</option>
+                <option value="11年级">11年级 / Grade 11</option>
+                <option value="12年级">12年级 / Grade 12</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="gradYear">预计美国入学年份 <span class="en">Expected U.S. entry year</span></label>
+              <input id="gradYear" data-field="gradYear" type="number" min="2026" max="2040" value="2030">
+            </div>
+            <div class="field">
+              <label for="gpa">GPA/校内均分 <span class="en">GPA / school average</span></label>
+              <input id="gpa" data-field="gpa" type="number" min="0" max="100" step="0.1" value="85">
+            </div>
+            <div class="field">
+              <label for="english">英语水平 <span class="en">English level</span></label>
+              <select id="english" data-field="english">
+                <option value="基础">基础 / Basic</option>
+                <option value="中等" selected>中等 / Intermediate</option>
+                <option value="可课堂学习">可课堂学习 / Classroom-ready</option>
+                <option value="接近母语">接近母语 / Near-native</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="atf">ATF 积分/排名 <span class="en">ATF points / ranking</span></label>
+              <input id="atf" data-field="atf" value="有积分">
+            </div>
+            <div class="field">
+              <label for="itf">ITF Junior 积分 <span class="en">ITF Junior points</span></label>
+              <input id="itf" data-field="itf" type="number" min="0" step="1" value="0">
+            </div>
+            <div class="field">
+              <label for="utr">UTR</label>
+              <input id="utr" data-field="utr" type="number" min="0" max="16.5" step="0.1" placeholder="例如 8.5 / e.g. 8.5">
+            </div>
+            <div class="field">
+              <label for="wtn">WTN</label>
+              <input id="wtn" data-field="wtn" type="number" min="1" max="40" step="0.1" placeholder="越低越强 / Lower is stronger">
+            </div>
+            <div class="field">
+              <label for="target">目标层级 <span class="en">Target level</span></label>
+              <select id="target" data-field="target">
+                <option value="D1 中下游/部分奖学金">D1 中下游/部分奖学金 / Lower-mid D1 partial scholarship</option>
+                <option value="D2 强队/D1 机会" selected>D2 强队/D1 机会 / Strong D2 with D1 upside</option>
+                <option value="D3 学术强校">D3 学术强校 / Academic D3</option>
+                <option value="NAIA/JUCO 跳板">NAIA/JUCO 跳板 / NAIA/JUCO pathway</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="video">招募视频 <span class="en">Recruiting video</span></label>
+              <select id="video" data-field="video">
+                <option value="未完成" selected>未完成 / Not ready</option>
+                <option value="有剪辑">有剪辑 / Highlight video</option>
+                <option value="有完整比赛">有完整比赛 / Full match</option>
+                <option value="剪辑+完整比赛">剪辑+完整比赛 / Highlights + full match</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="ncaa">NCAA Eligibility</label>
+              <select id="ncaa" data-field="ncaa">
+                <option value="未注册" selected>未注册 / Not registered</option>
+                <option value="已建账号">已建账号 / Account created</option>
+                <option value="材料整理中">材料整理中 / Documents in progress</option>
+                <option value="待认证">待认证 / Ready for certification</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="injury">伤病/注意点 <span class="en">Injury notes</span></label>
+              <input id="injury" data-field="injury" placeholder="无 / 膝 / 肩 / 腰 / None, knee, shoulder, back">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <h2>训练配比 <span class="en">Training Mix</span></h2>
+              <p class="section-note">把每周时间拆开，防止只比赛不建设身体，或只训练缺少可验证成绩。<br>Split the week so match play, development, and academic preparation all stay visible.</p>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="panel-lite">
+              <h3>每周小时 <span class="en">Weekly hours</span></h3>
+              <div class="range-list">
+                <div class="range-row">
+                  <label for="courtHours">场上训练 <span class="en">On-court training</span></label>
+                  <input id="courtHours" data-field="courtHours" type="range" min="4" max="24" value="14">
+                  <strong id="courtHoursOut">14h</strong>
+                </div>
+                <div class="range-row">
+                  <label for="fitnessHours">体能力量 <span class="en">Strength & conditioning</span></label>
+                  <input id="fitnessHours" data-field="fitnessHours" type="range" min="0" max="10" value="4">
+                  <strong id="fitnessHoursOut">4h</strong>
+                </div>
+                <div class="range-row">
+                  <label for="matchHours">比赛对抗 <span class="en">Match play</span></label>
+                  <input id="matchHours" data-field="matchHours" type="range" min="0" max="16" value="6">
+                  <strong id="matchHoursOut">6h</strong>
+                </div>
+                <div class="range-row">
+                  <label for="englishHours">英语/学业 <span class="en">English / academics</span></label>
+                  <input id="englishHours" data-field="englishHours" type="range" min="2" max="24" value="10">
+                  <strong id="englishHoursOut">10h</strong>
+                </div>
+              </div>
+            </div>
+            <div class="panel-lite">
+              <h3>本阶段训练重点 <span class="en">Current training priorities</span></h3>
+              <div class="checklist" id="trainingFocus"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="roadmap">
+          <div class="section-head">
+            <div>
+              <h2>四年路线图 <span class="en">Four-Year Roadmap</span></h2>
+              <p class="section-note">按 14 岁起步设计，可根据年龄自动高亮当前阶段。<br>Designed for a 14-year-old start and highlights the current stage automatically.</p>
+            </div>
+          </div>
+          <div class="timeline" id="timeline"></div>
+        </section>
+
+        <section class="section" id="events">
+          <div class="section-head">
+            <div>
+              <h2>赛事计划 <span class="en">Tournament Plan</span></h2>
+              <p class="section-note">优先让赛程服务于 ITF 积分、UTR/WTN 样本和招募录像。<br>Make the schedule serve ITF points, UTR/WTN samples, and recruiting video evidence.</p>
+            </div>
+            <button class="text-btn" id="addEventBtn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              加赛事 / Add event
+            </button>
+          </div>
+          <div class="list" id="eventList"></div>
+        </section>
+
+        <section class="section" id="recruiting">
+          <div class="section-head">
+            <div>
+              <h2>招募清单 <span class="en">Recruiting List</span></h2>
+              <p class="section-note">用目标学校当前阵容的后半段球员水平做匹配，而不是只看校名。<br>Match against the back half of current rosters, not just the school name.</p>
+            </div>
+            <button class="text-btn" id="addSchoolBtn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+              加学校 / Add school
+            </button>
+          </div>
+          <div class="list" id="schoolList"></div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <h2>合规与材料 <span class="en">Eligibility & Materials</span></h2>
+              <p class="section-note">NCAA 资格、学业和业余身份要从现在开始留证据。<br>Start preserving evidence for NCAA eligibility, academics, and amateurism now.</p>
+            </div>
+          </div>
+          <div class="task-grid">
+            <div class="task">
+              <h3>学业 / Academics <span class="pill" id="academicDone">0/5</span></h3>
+              <div class="checklist" data-list="academic"></div>
+            </div>
+            <div class="task">
+              <h3>网球材料 / Tennis Assets <span class="pill" id="tennisDone">0/5</span></h3>
+              <div class="checklist" data-list="tennis"></div>
+            </div>
+            <div class="task">
+              <h3>招募动作 / Recruiting Actions <span class="pill" id="recruitDone">0/5</span></h3>
+              <div class="checklist" data-list="recruit"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="export">
+          <div class="section-head">
+            <div>
+              <h2>输出摘要 <span class="en">Export Summary</span></h2>
+              <p class="section-note">可复制给教练、家长会议或留作月度复盘。<br>Copy this for coaches, family meetings, or monthly review.</p>
+            </div>
+            <button class="text-btn" id="copyBtn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              复制 / Copy
+            </button>
+          </div>
+          <div class="export" id="summary"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const storageKey = "ncaa-tennis-planner-v1";
+
+    const defaultState = {
+      name: "中国男子网球学生运动员",
+      age: 14,
+      height: 165,
+      weight: 45,
+      grade: "9年级",
+      gradYear: 2030,
+      gpa: 85,
+      english: "中等",
+      atf: "有积分",
+      itf: 0,
+      utr: "",
+      wtn: "",
+      target: "D2 强队/D1 机会",
+      video: "未完成",
+      ncaa: "未注册",
+      injury: "",
+      courtHours: 14,
+      fitnessHours: 4,
+      matchHours: 6,
+      englishHours: 10,
+      events: [
+        { name: "ITF J30/J60 起步站", type: "ITF J30/J60", goal: "争取正赛胜场和积分", status: "计划中" },
+        { name: "ATF U16 区域赛", type: "ATF", goal: "保持亚洲比赛样本", status: "计划中" },
+        { name: "UTR Verified 对抗", type: "UTR", goal: "补强 rating 和录像", status: "计划中" }
+      ],
+      schools: [
+        { name: "D2 强队样本", level: "D2", fit: "匹配", note: "对标 5-8 号单打 UTR/WTN" },
+        { name: "D1 中下游样本", level: "D1", fit: "冲刺", note: "需要 ITF 分和高质量胜场" },
+        { name: "D3 学术强校样本", level: "D3", fit: "备选", note: "重视成绩单和英语" }
+      ],
+      checks: {
+        academic: [false, false, false, false, false],
+        tennis: [false, false, false, false, false],
+        recruit: [false, false, false, false, false]
+      }
+    };
+
+    const checklistLabels = {
+      academic: [
+        "整理 9 年级起正式成绩单和英文翻译 / Collect official transcripts and English translations from Grade 9 onward",
+        "确认课程覆盖 NCAA core-course 方向 / Check that coursework aligns with NCAA core-course expectations",
+        "建立 GPA/均分趋势记录 / Track GPA or school average trends",
+        "规划 TOEFL/Duolingo/SAT 或校方要求 / Plan TOEFL, Duolingo, SAT, or school-specific requirements",
+        "建立 NCAA Eligibility Center 时间表 / Build an NCAA Eligibility Center timeline"
+      ],
+      tennis: [
+        "注册/维护 ITF IPIN、UTR、WTN 档案 / Register and maintain ITF IPIN, UTR, and WTN profiles",
+        "完成一场完整比赛录像 / Record one full match video",
+        "完成 3-5 分钟招募剪辑 / Produce a 3-5 minute recruiting highlight video",
+        "每季度更新胜负、对手 rating 和排名 / Update results, opponent ratings, and rankings each quarter",
+        "记录训练负荷、身高体重和伤病 / Track training load, height, weight, and injury notes"
+      ],
+      recruit: [
+        "建立 40-60 所学校长名单 / Build a long list of 40-60 schools",
+        "按 D1/D2/D3/NAIA/JUCO 分层 / Tier schools by D1, D2, D3, NAIA, and JUCO",
+        "写英文 coach email 模板 / Prepare an English coach email template",
+        "每 6-8 周更新教练 / Update coaches every 6-8 weeks",
+        "准备费用、奖学金和录取问题清单 / Prepare questions on cost, scholarships, and admissions"
+      ]
+    };
+
+    const roadmap = [
+      {
+        age: "14-15",
+        title: "从 ATF 转向 ITF 可见度 / Move from ATF base to ITF visibility",
+        tags: ["J30/J60", "UTR 样本 / UTR samples", "身体建设 / Physical base"],
+        items: ["继续 ATF，但把重点转到 ITF J30/J60 拿分。 / Keep ATF exposure, but shift the main goal to ITF J30/J60 points.", "建立 UTR/WTN/ITF 公开资料，开始保存完整比赛录像。 / Build public UTR, WTN, and ITF profiles, and start saving full match videos.", "每周 2-3 次力量与速度训练，避免只靠比赛堆积分。 / Add 2-3 weekly strength and speed sessions so development is not only tournament-driven."]
+      },
+      {
+        age: "15-16",
+        title: "形成可招募档案 / Build a recruitable profile",
+        tags: ["ITF 排名 / ITF ranking", "英文材料 / English materials", "成绩单 / Transcripts"],
+        items: ["争取 ITF Junior ranking 和稳定正赛胜场。 / Aim for an ITF Junior ranking and reliable main-draw wins.", "制作英文 tennis resume、视频链接和成绩单文件夹。 / Create an English tennis resume, video links, and academic document folder.", "开始研究学校 roster，比较 5-8 号单打水平。 / Study college rosters and compare against the No. 5-8 singles players."]
+      },
+      {
+        age: "16-17",
+        title: "主动联系教练 / Proactive coach outreach",
+        tags: ["邮件更新 / Email updates", "校队匹配 / Roster fit", "访问准备 / Visit prep"],
+        items: ["建立 40-60 所目标学校清单，按冲刺/匹配/保底分层。 / Build a 40-60 school list and tier it into reach, match, and safer options.", "每 6-8 周给教练更新成绩、视频、UTR/WTN 和学业。 / Send coaches updated results, video, UTR/WTN, and academics every 6-8 weeks.", "准备线上面试、校园访问和费用问题。 / Prepare for video calls, campus visits, and cost questions."]
+      },
+      {
+        age: "17-18",
+        title: "锁定 offer 与资格认证 / Secure offers and eligibility",
+        tags: ["Eligibility", "录取 / Admission", "奖学金 / Scholarship"],
+        items: ["完成 NCAA Eligibility Center、业余身份和学业材料。 / Complete NCAA Eligibility Center, amateurism, and academic documentation.", "比较队内位置、奖学金、学术奖和总费用。 / Compare roster spot, athletic aid, academic aid, and total cost.", "确认签约/入学节奏，制定入队前体能计划。 / Confirm signing and enrollment timing, then build a pre-arrival training plan."]
+      }
+    ];
+
+    let state = loadState();
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return structuredClone(defaultState);
+        return mergeState(structuredClone(defaultState), JSON.parse(raw));
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function mergeState(base, saved) {
+      for (const key of Object.keys(saved || {})) {
+        if (key === "checks") {
+          base.checks = { ...base.checks, ...saved.checks };
+        } else {
+          base[key] = saved[key];
+        }
+      }
+      return base;
+    }
+
+    function saveState() {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      flashButton(document.getElementById("saveBtn"), "已保存 / Saved");
+    }
+
+    function flashButton(btn, label) {
+      const old = btn.innerHTML;
+      btn.textContent = label;
+      setTimeout(() => {
+        btn.innerHTML = old;
+      }, 900);
+    }
+
+    function numberValue(value, fallback = 0) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : fallback;
+    }
+
+    function clamp(num, min, max) {
+      return Math.max(min, Math.min(max, num));
+    }
+
+    function scoreData() {
+      const age = numberValue(state.age, 14);
+      const height = numberValue(state.height, 165);
+      const weight = numberValue(state.weight, 45);
+      const gpa = numberValue(state.gpa, 0);
+      const itf = numberValue(state.itf, 0);
+      const utr = numberValue(state.utr, 0);
+      const wtn = numberValue(state.wtn, 40);
+      const bmi = weight && height ? weight / Math.pow(height / 100, 2) : 0;
+      const tennis = clamp(
+        (String(state.atf || "").trim() ? 18 : 0) +
+        (itf > 0 ? 24 : 0) +
+        clamp(utr * 5, 0, 42) +
+        (wtn < 35 ? clamp((40 - wtn) * 1.2, 0, 18) : 0),
+        0,
+        100
+      );
+      const academic = clamp(
+        (gpa >= 90 ? 48 : gpa >= 85 ? 42 : gpa >= 80 ? 34 : gpa >= 75 ? 24 : 12) +
+        ({ "基础": 8, "中等": 16, "可课堂学习": 28, "接近母语": 34 }[state.english] || 10) +
+        ({ "未注册": 6, "已建账号": 12, "材料整理中": 18, "待认证": 24 }[state.ncaa] || 6),
+        0,
+        100
+      );
+      const recruit = clamp(
+        ({ "未完成": 8, "有剪辑": 24, "有完整比赛": 28, "剪辑+完整比赛": 42 }[state.video] || 8) +
+        Math.min(state.schools.length * 8, 32) +
+        Math.min(state.events.length * 5, 20) +
+        (age >= 16 ? 6 : 0),
+        0,
+        100
+      );
+      const body = clamp(
+        (bmi >= 17.5 ? 32 : bmi >= 16 ? 24 : 16) +
+        numberValue(state.fitnessHours) * 7 +
+        (numberValue(state.courtHours) >= 10 ? 14 : 6) +
+        (String(state.injury || "").trim() ? -10 : 8),
+        0,
+        100
+      );
+      const overall = Math.round(tennis * 0.34 + academic * 0.24 + recruit * 0.24 + body * 0.18);
+      return { tennis: Math.round(tennis), academic: Math.round(academic), recruit: Math.round(recruit), body: Math.round(body), overall };
+    }
+
+    function fitText(score) {
+      if (score >= 82) return ["接近可强力招募档案 / Near a strong recruitable profile", "继续提高 ITF/UTR/WTN 质量胜场，尽快缩小目标学校清单。 / Keep adding quality ITF, UTR, and WTN wins, then narrow the target school list."];
+      if (score >= 68) return ["路线健康，进入材料打磨期 / Healthy path, now refine the materials", "重点是拿更多国际可验证成绩，持续更新教练和学校名单。 / Add more internationally verifiable results and keep coaches and school lists updated."];
+      if (score >= 52) return ["路线健康，需补 ITF 和视频证据 / Healthy path, but needs ITF and video evidence", "当前重点是 ITF J30/J60 拿分、建立 UTR/WTN 样本、保留 9 年级后成绩单。 / Focus on ITF J30/J60 points, UTR/WTN samples, and Grade 9+ transcript records."];
+      return ["基础阶段，先把证据体系建起来 / Foundation stage: build the evidence system first", "先完成公开档案、录像、成绩单和低级别 ITF/UTR 比赛样本。 / Start with public profiles, video, transcripts, and lower-level ITF/UTR match samples."];
+    }
+
+    function applyFieldValues() {
+      document.querySelectorAll("[data-field]").forEach((el) => {
+        const key = el.dataset.field;
+        if (el.type === "range" || el.type === "number") {
+          el.value = state[key] ?? "";
+        } else {
+          el.value = state[key] ?? "";
+        }
+      });
+    }
+
+    function bindFields() {
+      document.querySelectorAll("[data-field]").forEach((el) => {
+        el.addEventListener("input", () => {
+          const key = el.dataset.field;
+          state[key] = el.type === "number" || el.type === "range" ? numberValue(el.value, "") : el.value;
+          render();
+        });
+        el.addEventListener("change", () => {
+          const key = el.dataset.field;
+          state[key] = el.type === "number" || el.type === "range" ? numberValue(el.value, "") : el.value;
+          render();
+        });
+      });
+    }
+
+    function renderScores() {
+      const scores = scoreData();
+      const [level, copy] = fitText(scores.overall);
+      const yearsLeft = clamp(numberValue(state.gradYear, 2030) - 2026, 0, 8);
+      document.getElementById("scoreRing").style.setProperty("--score", scores.overall);
+      document.getElementById("scoreRing").textContent = scores.overall;
+      document.getElementById("sideScore").textContent = scores.overall;
+      document.getElementById("fitLevel").textContent = level;
+      document.getElementById("fitCopy").textContent = copy;
+      document.getElementById("tennisScore").textContent = scores.tennis;
+      document.getElementById("academicScore").textContent = scores.academic;
+      document.getElementById("recruitScore").textContent = scores.recruit;
+      document.getElementById("bodyScore").textContent = scores.body;
+      document.getElementById("tennisBar").style.setProperty("--value", scores.tennis + "%");
+      document.getElementById("academicBar").style.setProperty("--value", scores.academic + "%");
+      document.getElementById("recruitBar").style.setProperty("--value", scores.recruit + "%");
+      document.getElementById("bodyBar").style.setProperty("--value", scores.body + "%");
+      document.getElementById("heroAge").textContent = state.age || "-";
+      document.getElementById("heroItf").textContent = state.itf || 0;
+      document.getElementById("heroUtr").textContent = state.utr || "-";
+      document.getElementById("heroYears").textContent = yearsLeft;
+      document.getElementById("sideName").textContent = `${state.age || "-"}岁${state.name || "学生运动员"} / Age ${state.age || "-"} ${state.name || "student-athlete"}`;
+      document.getElementById("sideBody").textContent = `${state.height || "-"}cm · ${state.weight || "-"}kg`;
+      document.getElementById("sideClass").textContent = `预计 ${state.gradYear || "-"} 入学 / Expected ${state.gradYear || "-"} entry`;
+
+      document.getElementById("tennisCaption").textContent = state.itf > 0 ? "已有 ITF 积分，继续追求更高质量胜场。 / ITF points are on the board; keep improving win quality." : "ATF 有基础，下一步先拿 ITF Junior 分。 / ATF base is useful; the next step is ITF Junior points.";
+      document.getElementById("academicCaption").textContent = numberValue(state.gpa) >= 85 ? "学业基础不错，注意课程和英文材料留档。 / Academic base looks solid; preserve course and English documents." : "需要尽快稳住 GPA/均分和英语考试路线。 / Stabilize GPA/average and the English testing path soon.";
+      document.getElementById("recruitCaption").textContent = state.video === "剪辑+完整比赛" ? "视频材料成型，可以周期性发给教练。 / Video assets are ready for periodic coach updates." : "需要完整比赛和剪辑视频。 / Needs a full match and highlight recruiting video.";
+      document.getElementById("bodyCaption").textContent = String(state.injury || "").trim() ? "有伤病注意点，训练计划需保守递进。 / Injury notes exist; training should progress conservatively." : "优先力量、速度、恢复质量。 / Prioritize strength, speed, and recovery quality.";
+    }
+
+    function renderTrainingFocus() {
+      const focus = [];
+      if (numberValue(state.itf) === 0) focus.push("未来 6-12 个月以 ITF J30/J60 拿分为第一赛事目标。 / Make ITF J30/J60 points the top tournament goal for the next 6-12 months.");
+      if (!state.utr) focus.push("尽快参加 UTR Verified 或可计入公开 rating 的比赛。 / Enter UTR Verified or publicly rated matches as soon as possible.");
+      if (numberValue(state.fitnessHours) < 3) focus.push("体能力量低于建议值，增加到每周 3-5 小时。 / Strength and conditioning is below target; build toward 3-5 hours per week.");
+      if (numberValue(state.englishHours) < 8) focus.push("英语/学业时间偏低，国际申请路线需要提前补。 / English and academic time is low for the international application path.");
+      if (state.video === "未完成") focus.push("本月拍一场完整比赛，下月剪 3-5 分钟招募视频。 / Film one full match this month and cut a 3-5 minute recruiting video next month.");
+      if (!focus.length) focus.push("当前配比较均衡，保持月度复盘和季度视频更新。 / The mix is balanced; keep monthly reviews and quarterly video updates.");
+      document.getElementById("trainingFocus").innerHTML = focus.map((text) => `
+        <label class="check"><input type="checkbox"><span>${text}</span></label>
+      `).join("");
+      ["courtHours", "fitnessHours", "matchHours", "englishHours"].forEach((key) => {
+        document.getElementById(`${key}Out`).textContent = `${state[key]}h`;
+      });
+    }
+
+    function renderTimeline() {
+      const currentAge = numberValue(state.age, 14);
+      const html = roadmap.map((stage) => {
+        const [from, to] = stage.age.split("-").map(Number);
+        const active = currentAge >= from && currentAge <= to;
+        return `
+          <article class="timeline-item" style="${active ? "border-color:#2e6fbd; box-shadow:0 0 0 3px rgba(46,111,189,.12);" : ""}">
+            <div class="age">
+              <strong>${stage.age}岁 / age ${stage.age}</strong>
+              <span>${active ? "当前阶段 / Current stage" : "阶段目标 / Stage goal"}</span>
+            </div>
+            <div>
+              <h3>${stage.title}</h3>
+              <ul>${stage.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+            </div>
+            <div class="stage">${stage.tags.map((tag) => `<span class="pill">${tag}</span>`).join("")}</div>
+          </article>
+        `;
+      }).join("");
+      document.getElementById("timeline").innerHTML = html;
+    }
+
+    function eventRow(event, index) {
+      return `
+        <div class="event-row" data-index="${index}">
+          <input aria-label="赛事名称 / Event name" value="${escapeHtml(event.name)}" data-event-field="name">
+          <select aria-label="赛事类型 / Event type" data-event-field="type">
+            ${[
+              ["ITF J30/J60", "ITF J30/J60"],
+              ["ITF J100+", "ITF J100+"],
+              ["ATF", "ATF"],
+              ["国内赛", "国内赛 / Domestic"],
+              ["UTR", "UTR"],
+              ["成人公开赛", "成人公开赛 / Open"]
+            ].map(([value, label]) => `<option value="${value}" ${event.type === value ? "selected" : ""}>${label}</option>`).join("")}
+          </select>
+          <input aria-label="目标 / Goal" value="${escapeHtml(event.goal)}" data-event-field="goal">
+          <select aria-label="状态 / Status" data-event-field="status">
+            ${[
+              ["计划中", "计划中 / Planned"],
+              ["已报名", "已报名 / Entered"],
+              ["已完成", "已完成 / Completed"],
+              ["复盘中", "复盘中 / Reviewing"]
+            ].map(([value, label]) => `<option value="${value}" ${event.status === value ? "selected" : ""}>${label}</option>`).join("")}
+          </select>
+          <button class="delete-btn" type="button" data-delete-event="${index}" title="删除赛事 / Delete event">×</button>
+        </div>
+      `;
+    }
+
+    function schoolRow(school, index) {
+      return `
+        <div class="school-row" data-index="${index}">
+          <input aria-label="学校名称 / School name" value="${escapeHtml(school.name)}" data-school-field="name">
+          <select aria-label="层级 / Level" data-school-field="level">
+            ${["D1", "D2", "D3", "NAIA", "JUCO"].map((level) => `<option ${school.level === level ? "selected" : ""}>${level}</option>`).join("")}
+          </select>
+          <select aria-label="匹配度 / Fit" data-school-field="fit">
+            ${[
+              ["冲刺", "冲刺 / Reach"],
+              ["匹配", "匹配 / Match"],
+              ["保底", "保底 / Safer"],
+              ["观察", "观察 / Watch"]
+            ].map(([value, label]) => `<option value="${value}" ${school.fit === value ? "selected" : ""}>${label}</option>`).join("")}
+          </select>
+          <input aria-label="备注 / Note" value="${escapeHtml(school.note)}" data-school-field="note">
+          <button class="delete-btn" type="button" data-delete-school="${index}" title="删除学校 / Delete school">×</button>
+        </div>
+      `;
+    }
+
+    function renderLists() {
+      document.getElementById("eventList").innerHTML = state.events.map(eventRow).join("");
+      document.getElementById("schoolList").innerHTML = state.schools.map(schoolRow).join("");
+
+      document.querySelectorAll("[data-event-field]").forEach((el) => {
+        el.addEventListener("input", updateEvent);
+        el.addEventListener("change", updateEvent);
+      });
+      document.querySelectorAll("[data-school-field]").forEach((el) => {
+        el.addEventListener("input", updateSchool);
+        el.addEventListener("change", updateSchool);
+      });
+      document.querySelectorAll("[data-delete-event]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.events.splice(Number(btn.dataset.deleteEvent), 1);
+          render();
+        });
+      });
+      document.querySelectorAll("[data-delete-school]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.schools.splice(Number(btn.dataset.deleteSchool), 1);
+          render();
+        });
+      });
+    }
+
+    function updateEvent(e) {
+      const row = e.target.closest(".event-row");
+      const index = Number(row.dataset.index);
+      state.events[index][e.target.dataset.eventField] = e.target.value;
+      renderScores();
+      renderSummary();
+    }
+
+    function updateSchool(e) {
+      const row = e.target.closest(".school-row");
+      const index = Number(row.dataset.index);
+      state.schools[index][e.target.dataset.schoolField] = e.target.value;
+      renderScores();
+      renderSummary();
+    }
+
+    function renderChecklists() {
+      for (const key of Object.keys(checklistLabels)) {
+        const wrap = document.querySelector(`[data-list="${key}"]`);
+        wrap.innerHTML = checklistLabels[key].map((label, index) => `
+          <label class="check">
+            <input type="checkbox" data-check="${key}" data-check-index="${index}" ${state.checks[key][index] ? "checked" : ""}>
+            <span>${label}</span>
+          </label>
+        `).join("");
+        const done = state.checks[key].filter(Boolean).length;
+        const id = key === "academic" ? "academicDone" : key === "tennis" ? "tennisDone" : "recruitDone";
+        document.getElementById(id).textContent = `${done}/${state.checks[key].length}`;
+      }
+      document.querySelectorAll("[data-check]").forEach((box) => {
+        box.addEventListener("change", () => {
+          state.checks[box.dataset.check][Number(box.dataset.checkIndex)] = box.checked;
+          renderChecklists();
+          renderScores();
+          renderSummary();
+        });
+      });
+    }
+
+    function renderSummary() {
+      const scores = scoreData();
+      const [level] = fitText(scores.overall);
+      const topEvents = state.events.slice(0, 5).map((event) => `- ${event.type}: ${event.name} | 目标/Goal: ${event.goal} | 状态/Status: ${event.status}`).join("\n");
+      const schools = state.schools.slice(0, 6).map((school) => `- ${school.level} ${school.name}: ${school.fit} | ${school.note}`).join("\n");
+      const summary = [
+        `网球升 NCAA 月度摘要 / NCAA Tennis Pathway Monthly Summary`,
+        ``,
+        `运动员 / Athlete: ${state.name}`,
+        `年龄/身体 / Age & body: ${state.age}岁 / age ${state.age}, ${state.height}cm, ${state.weight}kg`,
+        `学业 / Academics: ${state.grade}, GPA/average ${state.gpa}, English ${state.english}, expected U.S. entry ${state.gradYear}`,
+        `网球 / Tennis: ATF ${state.atf || "未填 / blank"}, ITF Junior ${state.itf || 0} points, UTR ${state.utr || "未填 / blank"}, WTN ${state.wtn || "未填 / blank"}`,
+        `目标 / Target: ${state.target}`,
+        `总体准备度 / Overall readiness: ${scores.overall}/100 (${level})`,
+        ``,
+        `未来重点 / Next priorities:`,
+        `1. ${numberValue(state.itf) > 0 ? "扩大 ITF 胜场质量，尝试更高级别赛事。 / Improve ITF win quality and test higher-level events." : "优先参加 ITF J30/J60，拿到 Junior ranking point。 / Prioritize ITF J30/J60 and earn Junior ranking points."}`,
+        `2. ${state.video === "剪辑+完整比赛" ? "每季度更新完整比赛和剪辑链接。 / Update full match and highlight links quarterly." : "完成一场完整比赛录像和 3-5 分钟招募剪辑。 / Create one full match video and a 3-5 minute recruiting highlight video."}`,
+        `3. 整理 9 年级起成绩单、英文翻译和 NCAA Eligibility 材料。 / Organize Grade 9+ transcripts, English translations, and NCAA Eligibility materials.`,
+        `4. 建立 40-60 所学校长名单，按冲刺/匹配/保底分层。 / Build a 40-60 school list and tier it into reach, match, and safer options.`,
+        ``,
+        `近期赛事 / Near-term events:`,
+        topEvents || "- 暂无 / None",
+        ``,
+        `目标学校 / Target schools:`,
+        schools || "- 暂无 / None"
+      ].join("\n");
+      document.getElementById("summary").textContent = summary;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function render() {
+      applyFieldValues();
+      renderScores();
+      renderTrainingFocus();
+      renderTimeline();
+      renderLists();
+      renderChecklists();
+      renderSummary();
+    }
+
+    document.getElementById("saveBtn").addEventListener("click", saveState);
+    document.getElementById("printBtn").addEventListener("click", () => window.print());
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      state = structuredClone(defaultState);
+      localStorage.removeItem(storageKey);
+      render();
+    });
+    document.getElementById("addEventBtn").addEventListener("click", () => {
+      state.events.push({ name: "新赛事 / New event", type: "ITF J30/J60", goal: "目标 / Goal", status: "计划中" });
+      render();
+    });
+    document.getElementById("addSchoolBtn").addEventListener("click", () => {
+      state.schools.push({ name: "新学校 / New school", level: "D2", fit: "观察", note: "记录 roster、教练邮箱、费用 / Record roster, coach email, and cost" });
+      render();
+    });
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      const text = document.getElementById("summary").textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        flashButton(document.getElementById("copyBtn"), "已复制 / Copied");
+      } catch {
+        window.getSelection().selectAllChildren(document.getElementById("summary"));
+      }
+    });
+    document.querySelectorAll(".nav a, .mobile-nav a").forEach((link) => {
+      link.addEventListener("click", () => {
+        const target = link.getAttribute("href");
+        document.querySelectorAll(".nav a, .mobile-nav a").forEach((item) => {
+          item.classList.toggle("active", item.getAttribute("href") === target);
+        });
+      });
+    });
+
+    bindFields();
+    render();
+  </script>
+</body>
+</html>
